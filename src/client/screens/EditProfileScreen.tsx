@@ -49,7 +49,7 @@ const EditProfileScreen = () => {
 
       {/* Sign Up Button */}
       <TouchableOpacity 
-        onPress={() => navigation.navigate('MainStack', { screen: 'HomeScreen' })}
+        onPress={() => navigation.navigate('Explore', { screen: 'HomeScreen' })}
 
       style={styles.button}
       >

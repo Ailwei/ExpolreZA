@@ -9,7 +9,7 @@ import {
   Image,
 } from 'react-native';
 import { useAuthRequest } from 'expo-auth-session';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { useNavigation, NavigationProp, Link } from '@react-navigation/native';
 import { RootStackParamList } from '../types/RootStackParamList';
 
 const { height, width } = Dimensions.get('window');
@@ -85,12 +85,7 @@ const HomeScreen = () =>{
       </TouchableOpacity>
 
       {/* Continue with Email */}
-      <TouchableOpacity 
-        onPress={() => navigation.navigate('SignUpScreen')}
-      style={[styles.button, { backgroundColor: 'green' }]}
-      >
-        <Text style={styles.buttonText}>Continue with Email</Text>
-      </TouchableOpacity>
+      
 
       <View style={styles.orContainer}>
         <View style={styles.line} />
@@ -98,11 +93,25 @@ const HomeScreen = () =>{
         <View style={styles.line} />
       </View>
 
-      <TouchableOpacity style={[styles.button, { backgroundColor: 'gray' }]}>
-        <Text style={styles.buttonText}>Continue as Guest</Text>
+      <TouchableOpacity 
+        onPress={() => navigation.navigate('SignUpScreen')}
+      style={[styles.button, { backgroundColor: 'green' }]}
+      >
+        <Text style={styles.buttonText}>Continue with Email</Text>
       </TouchableOpacity>
-
+<View>
+  <Text>
+  Already registered?{' '}
+  <Text
+    style={{ color: 'blue', textDecorationLine: 'underline' }}
+    onPress={() => navigation.navigate('SignInScreen')}
+  >
+    Sign in
+  </Text>
+</Text>
+</View>
       <View>
+        
         <Text style={styles.buttonTeerms}>
           By using this application you agree to be bound by these terms and
           conditions.

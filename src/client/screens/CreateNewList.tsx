@@ -1,15 +1,72 @@
 import React, { useState } from "react";
 import { Text, View, TextInput, Dimensions, TouchableOpacity, StyleSheet } from "react-native";
+import axios from "axios";
+import { useNavigation, NavigationProp, useRoute, RouteProp } from '@react-navigation/native';
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from 'jwt-decode';
 
 const { height, width } = Dimensions.get('window');
 
-const CreateFavoriteScreen = () => {
+const CreateNewListScreen = () => {
+    const navigation = useNavigation<NavigationProp<any>>();
+    const route = useRoute<RouteProp<any>>();
     const [showDropdown, setShowDropdown] = useState(false);
-    const [selectedPrivacy, setSelectedPrivacy] = useState("Privacy level");
+    const [selectedPrivacy, setSelectedPrivacy] = useState("Public");
+    const [listName, setListName] = useState("");
+    const [description, setDescription] = useState("");
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [userId, setUserId] = useState<string | null>(null);
 
-    const handleSelect = (option: string) => {
-        setSelectedPrivacy(option);
-        setShowDropdown(false);
+    React.useEffect(() => {
+        const fetchUserId = async () => {
+            const token = await AsyncStorage.getItem('token');
+            if (token) {
+                const decoded: any = jwtDecode(token as string);
+                setUserId(decoded.id);
+            }
+        };
+        fetchUserId();
+    }, []);
+
+   const handleSelect = (option: string) => {
+    const enumMap: Record<string, string> = {
+        "Public": "Public",
+        "Private": "Private",
+        "Followers Only": "FollowersOnly"
+    };
+    setSelectedPrivacy(enumMap[option]);
+    setShowDropdown(false);
+};
+
+    const handleSaveList = async () => {
+      
+        try {
+    const response = await axios.post('http://192.168.18.29:3000/api/createNewList', {
+        listName,
+        description,
+        privateLevel: selectedPrivacy,
+        userId
+    });
+    const newListId = response.data.id;
+    if(route.params?.onListCreated){
+        route.params.onListCreated(newListId);
+    }
+navigation.goBack();
+} catch (errors: any) {
+    console.error(errors);
+            if (errors.response?.data?.errors) {
+                const fieldErrors: { [key: string]: string } = {};
+                errors.response.data.errors.forEach((err: { field: string; message: string }) => {
+                    fieldErrors[err.field] = err.message;
+                });
+                setErrors(fieldErrors);
+            } else if (errors.response?.data?.message) {
+                setErrors({ general: errors.response.data.message });
+            } else {
+                setErrors({ general: 'An error occurred during sign in. Please try again.' });
+            }
+        }
     };
 
     return (
@@ -17,6 +74,8 @@ const CreateFavoriteScreen = () => {
             <TextInput
                 style={styles.listNameInput}
                 placeholder="List Name"
+                value={listName}
+                onChangeText={text => setListName(text)}
             />
 
             <TextInput
@@ -25,6 +84,8 @@ const CreateFavoriteScreen = () => {
                 multiline={true}
                 numberOfLines={4}
                 textAlignVertical="top"
+                value={description}
+                onChangeText={text => setDescription(text)}
             />
 
             <View style={styles.dropdownWrapper}>
@@ -43,7 +104,7 @@ const CreateFavoriteScreen = () => {
                 )}
             </View>
 
-            <TouchableOpacity style={styles.saveButton}>
+            <TouchableOpacity style={styles.saveButton} onPress={handleSaveList}>
                 <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>
         </View>
@@ -115,4 +176,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CreateFavoriteScreen;
+export default CreateNewListScreen;

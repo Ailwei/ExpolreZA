@@ -2,13 +2,12 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+const FontAwesome5 = require('react-native-vector-icons/FontAwesome5').default;
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { View } from 'react-native';
 // Screens
 import HomeScreen from '../screens/HomeScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
-import ExploreScreen from '../screens/ExploreScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import SearchFilterScreen from '../screens/SearchFilter';
@@ -23,12 +22,13 @@ import { RootStackParamList } from '../types/RootStackParamList';
 import { NavigationProp } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import SettingsScreeen from '../screens/SettingsScreen';
-import CreateFavoriteScreen from '../screens/CreateNewFavotites';
+import CreateFavoriteScreen from '../screens/CreateNewList';
+import ForgotPassword from '../screens/forgotPassowrd';
+import CreateNewListScreen from '../screens/CreateNewList';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// Stack Navigator for MainScreen
 function MainStack() {
   return (
     <Stack.Navigator
@@ -39,7 +39,8 @@ function MainStack() {
         component={HomeScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="CreateFavouritesScreen" component={CreateFavoriteScreen} />
+      <Stack.Screen name='ForgotPassword' component={ForgotPassword} />
+      <Stack.Screen name="CreateNewListScreen" component={CreateNewListScreen} />
       <Stack.Screen name='MainScreen' component={MainScreen} options={{ headerShown: false }} />
       <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
       <Stack.Screen name="SignInScreen" component={SignInScreen} />
@@ -55,10 +56,8 @@ function BottomTabs() {
     <Tab.Navigator
       screenOptions={({ route }) => {
         const routeName = getFocusedRouteNameFromRoute(route) ?? 'HomeScreen';
-
-        // Dynamically hide BottomTabs for specific screens
         const hideTabBar =
-          route.name === 'MainStack' &&
+          route.name === 'Explore' &&
           (routeName === 'HomeScreen' || routeName === 'SearchFilterScreen' || routeName === 'SignUpScreen');
 
         return {
@@ -74,7 +73,7 @@ function BottomTabs() {
 
             if (route.name === 'Profile') {
               iconName = 'user';
-            } else if (route.name === 'MainStack') {
+            } else if (route.name === 'Explore') {
               iconName = 'search';
             } else if (route.name === 'Community') {
               iconName = 'users';
@@ -82,7 +81,7 @@ function BottomTabs() {
               iconName = 'bookmark';
             }
 
-            return <Icon name={iconName} size={size} color={color} />;
+            return <FontAwesome5 name={iconName} size={size} color={color} />;
           },
           tabBarActiveTintColor: '#007BFF',
           tabBarInactiveTintColor: 'gray',
@@ -90,7 +89,7 @@ function BottomTabs() {
       }}
     >
       <Tab.Screen
-        name="MainStack"
+        name="Explore"
         component={MainStack}
         options={({ route }) => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? 'HomeScreen';
@@ -118,14 +117,14 @@ function BottomTabs() {
             const hideMenu = () => setVisible(false);
 
             return (
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10, paddingBottom: 4 }}>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('MainStack', { screen: 'SettingsScreen' })}
+                  onPress={() => navigation.navigate('Explore', { screen: 'SettingsScreen' })}
 
                   style={{ marginRight: 10 }}
                 >
 
-                  <Icon name="cog" size={24} color="black" />
+                  <FontAwesome5 name="cog" size={24} color="black" />
                 </TouchableOpacity>
 
                 <Menu
@@ -133,7 +132,7 @@ function BottomTabs() {
                   anchor={
                     <TouchableOpacity onPress={showMenu}
                     >
-                      <Icon name="ellipsis-v" size={24} color="black" />
+                      <FontAwesome5 name="ellipsis-v" size={24} color="black" />
                     </TouchableOpacity>
                   }
                   onDismiss={hideMenu}
@@ -141,14 +140,14 @@ function BottomTabs() {
                   <Menu.Item
                     onPress={() => {
                       hideMenu();
-                      navigation.navigate('MainStack', { screen: 'EditProfileScreen' });
+                      navigation.navigate('Explore', { screen: 'EditProfileScreen' });
                     }}
                     title="Edit Profile"
                   />
                   <Menu.Item
                     onPress={() => {
                       hideMenu();
-                      navigation.navigate('MainStack', { screen: 'ShareProfileScreen' });
+                      navigation.navigate('Explore', { screen: 'ShareProfileScreen' });
                     }}
                     title="ShareProfile" />
                 </Menu>

@@ -4,9 +4,13 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 
 const { width, height } = Dimensions.get("window")
 
-const ActivityTypes = () => {
-    const [selected, setSelected] = useState("NearBy")
-    console.log(selected)
+type ActivityTypesProps = {
+    selectedtype: string;
+    onSelectType: (type: string) => void;
+}
+
+const ActivityTypes: React.FC<ActivityTypesProps> = ({ selectedtype, onSelectType }) => {
+
     return (
 
         <ScrollView
@@ -15,9 +19,9 @@ const ActivityTypes = () => {
             style={styles.scrollContainer}>
             <TouchableOpacity
                 style={[styles.item,
-                selected === "NearBy" ? { backgroundColor: "#F5F6F5" } : { backgroundColor: "#fff" }
+                selectedtype === "NearBy" ? { backgroundColor: "#F5F6F5" } : { backgroundColor: "#fff" }
                 ]}
-                onPress={() => setSelected("NearBy")}
+                onPress={() => onSelectType("NearBy")}
 
             >
                 <View style={styles.icon}>
@@ -28,25 +32,19 @@ const ActivityTypes = () => {
                 </View>
             </TouchableOpacity>
             <TouchableOpacity
-                style={styles.item}
+                style={[styles.item, selectedtype === "Hiking" ? { backgroundColor: "#F5F6F5" } : { backgroundColor: "#fff" }]}
+                onPress={() => onSelectType("Hiking")}
             >
                 <View style={styles.icon}>
                     <Icon name="map" size={30} color="black" />
-                    <Text style={[styles.text,
-                    selected === "Hiking" ? { backgroundColor: "#F5F5F5" } : { backgroundColor: "#fff" }
-                    ]}
-                        onPress={() => setSelected("Hiking")}
-                    >
-                        Hiking
-                    </Text>
+                    <Text style={styles.text}>Hiking</Text>
                 </View>
-
             </TouchableOpacity>
             <TouchableOpacity
                 style={[styles.item,
-                selected === "Camping" ? { backgroundColor: "#F5F5F5" } : { backgroundColor: "#fff" }
+                selectedtype === "Camping" ? { backgroundColor: "#F5F5F5" } : { backgroundColor: "#fff" }
                 ]}
-                onPress={() => setSelected("Camping")}
+                onPress={() => onSelectType("Camping")}
             >
                 <View style={styles.icon} >
                     <Icon name="tree" size={30} color="black" />
@@ -57,27 +55,22 @@ const ActivityTypes = () => {
 
             </TouchableOpacity>
             <TouchableOpacity
-                style={[styles.item,
-                selected === "Camping" ? { backgroundColor: "#F5F5F5" } : { backgroundColor: "#fff" }
+                style={[
+                    styles.item,
+                    selectedtype === "Fishing" ? { backgroundColor: "#F5F5F5" } : { backgroundColor: "#fff" }
                 ]}
-                onPress={() => setSelected("Camping")}
+                onPress={() => onSelectType("Fishing")}
             >
                 <View style={styles.icon}>
                     <Icon name="anchor" size={30} color="black" />
-                    <Text style={[styles.text,
-                    selected === "Fishing" ? { backgroundColor: "#F5F5F5" } : { backgroundColor: "#fff" }
-                    ]}
-                        onPress={() => setSelected("Fishing")}
-                    >
-                        Fishing
-                    </Text>
+                    <Text style={styles.text}>Fishing</Text>
                 </View>
             </TouchableOpacity>
             <TouchableOpacity
                 style={[styles.item,
-                selected === "Passes" ? { backgroundColor: "#F5F5F5" } : { backgroundColor: "#fff" }
+                selectedtype === "Passes" ? { backgroundColor: "#F5F5F5" } : { backgroundColor: "#fff" }
                 ]}
-                onPress={() => setSelected("Passes")}
+                onPress={() => onSelectType("Passes")}
             >
                 <View style={styles.icon}>
                     <Icon name="car" size={30} color="black" />
@@ -90,9 +83,9 @@ const ActivityTypes = () => {
             </TouchableOpacity>
             <TouchableOpacity
                 style={[styles.item,
-                selected === "WaterFalls" ? { backgroundColor: "#F5F5F5" } : { backgroundColor: "#fff" }
+                selectedtype === "WaterFalls" ? { backgroundColor: "#F5F5F5" } : { backgroundColor: "#fff" }
                 ]}
-                onPress={() => setSelected("WaterFalls")}
+                onPress={() => onSelectType("WaterFalls")}
             >
                 <View style={styles.icon}>
                     <Icon name="camera" size={30} color="black" />
@@ -120,8 +113,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#F5F5F5",
         borderRadius: 10,
         padding: 15,
-        width: width * 0.4,
-        height: height * 0.1,
+        width: width * 0.3,
+        height: height * 0.09,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,

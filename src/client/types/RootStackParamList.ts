@@ -1,6 +1,20 @@
 export type RootStackParamList = {
-   MainStack: {
-    screen: 'EditProfileScreen'|'SettingsScreen' | 'HomeScreen' |'ShareProfileScreen'|'SettingsScreen'| 'SignUpScreen'| 'SignInScreen'| 'SearchFilterScreen' |'CreateFavouritesScreen'|'MainScreen';
+   Explore: {
+    screen:
+    | 'EditProfileScreen'
+    | 'SettingsScreen'
+    | 'HomeScreen'
+    | 'ShareProfileScreen'
+    | 'SettingsScreen'
+    | 'SignUpScreen'
+    | 'SignInScreen'
+    | 'SearchFilterScreen'
+    | 'CreateNewListScreen'
+    | 'MainScreen'
+    | 'ForgotPassword';
+    params?: {
+      onListCreated?: (newListId: string) => void;
+    };
   };
     Home: undefined;
     SignUpScreen: undefined; 
@@ -8,4 +22,5 @@ export type RootStackParamList = {
     SearchFilterScreen: undefined;
     SignInScreen: undefined;
     EditProfileScreen: undefined;
+    ForgotPassword: undefined;
   };

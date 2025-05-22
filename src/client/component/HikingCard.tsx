@@ -1,28 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, Dimensions, TouchableOpacity, StyleSheet, Image } from "react-native";
 
-const { width } = Dimensions.get("window");
+const { width , height} = Dimensions.get("window");
 
-interface HikingCardProps {
-    image: string;
-    distance: string;
-    difficulty: string;
-    location: string;
-    estimatedTime: string;
-}
 
-const HikingCard: React.FC<HikingCardProps> = ({ image, distance, difficulty, location, estimatedTime }) => {
+
+const HikingCard: React.FC = () => {
+    const [hiking,setHiking] = useState()
     return (
         <TouchableOpacity style={styles.card}>
-            {/* Hiking Image */}
-            <Image source={{ uri: image }} style={styles.image} />
 
-            {/* Hiking Details */}
             <View style={styles.details}>
-                <Text style={styles.location}>{location}</Text>
-                <Text style={styles.info}>Distance: {distance}</Text>
-                <Text style={styles.info}>Difficulty: {difficulty}</Text>
-                <Text style={styles.info}>Estimated Time: {estimatedTime}</Text>
+         <Text>Hiking compont</Text>
             </View>
         </TouchableOpacity>
     );
@@ -41,6 +30,7 @@ const styles = StyleSheet.create({
         elevation: 3,
         width: width * 0.9,
         alignSelf: "center",
+        height: height * 0.3,
     },
     image: {
         width: "100%",

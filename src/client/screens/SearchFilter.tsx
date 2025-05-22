@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     margin: 15,
   },
   filterButtonText: {
-    fontSize: 20,
+    fontSize: 15,
     color: '#fff',
   },
   filterButtonContainer: {
@@ -310,6 +310,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     backgroundColor: "grey",
+    marginBottom: 1,
   }
 });
 
