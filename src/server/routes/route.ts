@@ -14,14 +14,14 @@ const router = Router();
 
 router.post('/register', registerController);
 router.post('/login', loginController);
-router.post('/createNewList', createNewListController);
-router.post('/saveActivities', cacheActivitiesController);
+router.post('/createNewList',authenticateJWT, createNewListController);
+router.post('/saveActivities',authenticateJWT, cacheActivitiesController);
 router.post('/fetchNearby', fetchNearbyController);
 router.post('/fetchFavourites',authenticateJWT, fetchFavouritesController);
 router.post('/fetchLists',authenticateJWT,  fetchListsController);
-router.post('/saveFavourites', saveFavoritesController);
-router.post('/removeFavourites', removeFavouritesController);
-router.post('/deleteList', deleteListController);
+router.post('/saveFavourites',authenticateJWT,  saveFavoritesController);
+router.post('/removeFavourites',authenticateJWT, removeFavouritesController);
+router.post('/deleteList',authenticateJWT, deleteListController);
 
 
 export default router;

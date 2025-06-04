@@ -1,12 +1,14 @@
+/// <reference path="../express.d.ts" />;
 import { Request, Response } from "express";
 import db from "../db/database";
 
 const deleteListController = async (req: Request, res: Response) => {
     try {
-        const { listId, userId } = req.body;
+        const userId = req.user.id;
+        const { listId } = req.body;
 
-        if (!listId || !userId) {
-            return res.status(400).json({ error: "listId and userId are required" });
+        if (!listId) {
+            return res.status(400).json({ error: "listId is required" });
         }
 
         const list = await db.list.findFirst({
@@ -33,5 +35,4 @@ const deleteListController = async (req: Request, res: Response) => {
         return res.status(500).json({ error: "Failed to delete list" });
     }
 };
-
 export default deleteListController;

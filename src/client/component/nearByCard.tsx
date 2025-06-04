@@ -17,13 +17,14 @@ const Nearby = () => {
     const [userId, setUserId] = useState<string | null>(null);
     const [favourites, setFavourites] = useState<any[]>([]);
 
-    const fetchFavourites = async (uid: string) => {
-        const res = await axios.post("http://192.168.18.29:3000/api/fetchFavourites", {
-            userId: uid,
-            
-        });
-        setFavourites(res.data.favourites || []);
+   const fetchFavourites = async () => {
+    const token = await AsyncStorage.getItem("token");
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
     };
+    const res = await axios.post("http://192.168.18.29:3000/api/fetchFavourites", {}, config);
+    setFavourites(res.data.favourites || []);
+};
 
     useEffect(() => {
         const fetchUserIdAndFavourites = async () => {
@@ -31,7 +32,7 @@ const Nearby = () => {
             if (token) {
                 const decoded: any = jwtDecode(token as string);
                 setUserId(decoded.id);
-                await fetchFavourites(decoded.id);
+                await fetchFavourites();
             }
         };
         fetchUserIdAndFavourites();
@@ -60,7 +61,7 @@ const Nearby = () => {
                         item={item}
                         favourites={favourites}
                         userId={userId}
-                        onFavouritesChanged={() => userId && fetchFavourites(userId)}
+                        onFavouritesChanged={() => userId && fetchFavourites()}
                     />
                 )}
                 initialNumToRender={10}

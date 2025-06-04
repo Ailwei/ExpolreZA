@@ -29,30 +29,37 @@ const FavouritesScreen: React.FC<FavouritesScreenProps> = ({ onSelectList, isMod
 
 
     const deleteList = async (listId: string) => {
-        try {
-            await axios.post("http://192.168.18.29:3000/api/deleteList", {
-                listId,
-                userId
-            });
-            console.log("List deleted successfully:", listId);
-            if (userId) await fetchListsAndFavourites(userId);
-        } catch (error) {
-            console.error("Error deleting list:", error);
-        }
-    };
-    const fetchListsAndFavourites = async (uid: string) => {
-        setLoading(true);
-        try {
-            const [listsRes, favsRes] = await Promise.all([
-                axios.post("http://192.168.18.29:3000/api/fetchLists", { userId: uid }),
-                axios.post("http://192.168.18.29:3000/api/fetchFavourites", { userId: uid })
-            ]);
-            setLists(listsRes.data.lists);
-            setFavourites(favsRes.data.favourites);
-        } finally {
-            setLoading(false);
-        }
-    };
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+        await axios.post("http://192.168.18.29:3000/api/deleteList", {
+            listId,
+        }, config);
+        console.log("List deleted successfully:", listId);
+        if (userId) await fetchListsAndFavourites();
+    } catch (error) {
+        console.error("Error deleting list:", error);
+    }
+};
+    const fetchListsAndFavourites = async () => {
+    setLoading(true);
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+        const [listsRes, favsRes] = await Promise.all([
+            axios.post("http://192.168.18.29:3000/api/fetchLists", {}, config),
+            axios.post("http://192.168.18.29:3000/api/fetchFavourites", {}, config)
+        ]);
+        setLists(listsRes.data.lists);
+        setFavourites(favsRes.data.favourites);
+    } finally {
+        setLoading(false);
+    }
+};
     useEffect(() => {
         const fetchUserId = async () => {
             const token = await AsyncStorage.getItem('token');
@@ -66,12 +73,12 @@ const FavouritesScreen: React.FC<FavouritesScreenProps> = ({ onSelectList, isMod
 
     useEffect(() => {
         if (!userId) return;
-        fetchListsAndFavourites(userId);
+        fetchListsAndFavourites();
     }, [userId]);
 useFocusEffect(
     React.useCallback(() => {
         if (userId) {
-            fetchListsAndFavourites(userId);
+            fetchListsAndFavourites();
         }
     }, [userId])
 );
@@ -95,7 +102,7 @@ useFocusEffect(
                             params: {
                                 onListCreated: (newListId: string) => {
                                     if (onSelectList) onSelectList(newListId);
-                                    if (userId) fetchListsAndFavourites(userId);
+                                    if (userId) fetchListsAndFavourites();
                                 }
                             }
                         })

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import FavouritesModal from "./FavouriteModal";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const FontAwesome5 = require('react-native-vector-icons/FontAwesome5').default;
 
 const { width, height } = Dimensions.get("window");
@@ -17,18 +18,29 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ item, favourites, userId, o
     const [modalVisible, setModalVisible] = useState(false);
     const iconSize = 20;
 
-    const favourite = favourites.find(fav => fav.activityId === item.id);
-    const isFavourited = !!favourite;
+   const isFavourited = favourites.some(
+  fav =>
+    fav.activityId === item.id ||
+    (fav.activity && fav.activity.id === item.id)
+);
+
 
     const handleToggleFavourite = async (e: any) => {
         e.stopPropagation();
         if (!userId) return;
 
+        const token = await AsyncStorage.getItem('token');
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+
         if (isFavourited) {
             await axios.post("http://192.168.18.29:3000/api/removeFavourites", {
-                listId: favourite.listId,
+                listId: (favourites.find(
+                    fav => fav.activityId === item.id || (fav.activity && fav.activity.id === item.id)
+                )?.listId),
                 activityId: item.id,
-            });
+            }, config);
             onFavouritesChanged();
         } else {
             setModalVisible(true);
@@ -36,11 +48,14 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ item, favourites, userId, o
     };
 
     const handleAddToList = async (listId: string) => {
+        const token = await AsyncStorage.getItem('token');
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
         await axios.post("http://192.168.18.29:3000/api/saveFavourites", {
-            userId,
             listId,
             activityId: item.id,
-        });
+        }, config);
         setModalVisible(false);
         onFavouritesChanged();
     };

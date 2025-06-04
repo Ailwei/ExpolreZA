@@ -39,15 +39,17 @@ const CreateNewListScreen = () => {
     setShowDropdown(false);
 };
 
-    const handleSaveList = async () => {
-      
-        try {
-    const response = await axios.post('http://192.168.18.29:3000/api/createNewList', {
-        listName,
-        description,
-        privateLevel: selectedPrivacy,
-        userId
-    });
+   const handleSaveList = async () => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+        const response = await axios.post('http://192.168.18.29:3000/api/createNewList', {
+            listName,
+            description,
+            privateLevel: selectedPrivacy
+        }, config);
     const newListId = response.data.id;
     if(route.params?.onListCreated){
         route.params.onListCreated(newListId);

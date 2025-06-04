@@ -17,7 +17,7 @@ const createNewListController = async (req: Request, res: Response) => {
                 }))
             })
         }
-        const userId = req.body.userId;
+        const userId = req.user.id
         if (!userId){
             return res.status(401).json({ message: "User Id is required" });
         }

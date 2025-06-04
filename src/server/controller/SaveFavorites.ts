@@ -14,7 +14,7 @@ const saveFavoritesController = async (req: Request, res: Response) => {
                 }))
             });
         }
-        const userId = req.body.userId; 
+        const userId = req.user.id; 
         const { listId, activityId } = parseResul.data;
 
         const list = await db.list.findUnique({ where: { id: listId } });
