@@ -6,13 +6,19 @@ type FavouritesModalProps = {
     visible: boolean;
     onClose: () => void;
     onSelectList: (listId: string) => void;
+    onListCreated?: (newListId: string) => void;
+    
 };
 
-const FavouritesModal: React.FC<FavouritesModalProps> = ({ visible, onClose, onSelectList }) => (
+const FavouritesModal: React.FC<FavouritesModalProps> = ({ visible, onClose, onSelectList , onListCreated}) => (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
         <View style={styles.overlay}>
             <View style={styles.content}>
-                <FavouritesScreen onSelectList={onSelectList} isModal />
+                 <FavouritesScreen
+                    onSelectList={onSelectList}
+                    isModal
+                    onListCreated={onListCreated}
+                />
                 <TouchableOpacity onPress={onClose} style={{ marginTop: 10 }}>
                     <Text style={{ color: "red", textAlign: "center" }}>Cancel</Text>
                 </TouchableOpacity>

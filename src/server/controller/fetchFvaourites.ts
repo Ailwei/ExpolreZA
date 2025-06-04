@@ -3,7 +3,7 @@ import db from "../db/database";
 
 const fetchFavouritesController = async (req: Request, res: Response) => {
     try {
-        const userId = req.body.userId;
+        const userId = req.user.id;
       
         const lists = await db.list.findMany({
             where: { userId },

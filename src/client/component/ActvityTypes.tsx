@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { View, Text, Dimensions, FlatList, Button, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
-import Icon from 'react-native-vector-icons/FontAwesome'
+const FontAwesome5 = require('react-native-vector-icons/FontAwesome5').default;
 
 const { width, height } = Dimensions.get("window")
 
@@ -25,7 +25,7 @@ const ActivityTypes: React.FC<ActivityTypesProps> = ({ selectedtype, onSelectTyp
 
             >
                 <View style={styles.icon}>
-                    <Icon name="map-marker" size={30} color="black" />
+                    <FontAwesome5 name="map-marker" size={30} color="back" />
                     <Text style={styles.text}>
                         Nearby
                     </Text>
@@ -36,7 +36,7 @@ const ActivityTypes: React.FC<ActivityTypesProps> = ({ selectedtype, onSelectTyp
                 onPress={() => onSelectType("Hiking")}
             >
                 <View style={styles.icon}>
-                    <Icon name="map" size={30} color="black" />
+                    <FontAwesome5 name="map" size={30} color="black" />
                     <Text style={styles.text}>Hiking</Text>
                 </View>
             </TouchableOpacity>
@@ -47,7 +47,7 @@ const ActivityTypes: React.FC<ActivityTypesProps> = ({ selectedtype, onSelectTyp
                 onPress={() => onSelectType("Camping")}
             >
                 <View style={styles.icon} >
-                    <Icon name="tree" size={30} color="black" />
+                    <FontAwesome5 name="tree" size={30} color="black" />
                     <Text style={styles.text}>
                         Camping
                     </Text>
@@ -62,7 +62,7 @@ const ActivityTypes: React.FC<ActivityTypesProps> = ({ selectedtype, onSelectTyp
                 onPress={() => onSelectType("Fishing")}
             >
                 <View style={styles.icon}>
-                    <Icon name="anchor" size={30} color="black" />
+                    <FontAwesome5 name="anchor" size={30} color="black" />
                     <Text style={styles.text}>Fishing</Text>
                 </View>
             </TouchableOpacity>
@@ -73,7 +73,7 @@ const ActivityTypes: React.FC<ActivityTypesProps> = ({ selectedtype, onSelectTyp
                 onPress={() => onSelectType("Passes")}
             >
                 <View style={styles.icon}>
-                    <Icon name="car" size={30} color="black" />
+                    <FontAwesome5 name="car" size={30} color="black" />
 
                     <Text style={styles.text}>
                         Passes
@@ -88,7 +88,7 @@ const ActivityTypes: React.FC<ActivityTypesProps> = ({ selectedtype, onSelectTyp
                 onPress={() => onSelectType("WaterFalls")}
             >
                 <View style={styles.icon}>
-                    <Icon name="camera" size={30} color="black" />
+                    <FontAwesome5 name="camera" size={30} color="black" />
 
                     <Text style={styles.text}>
                         WaterFalls

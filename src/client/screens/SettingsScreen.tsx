@@ -1,10 +1,22 @@
 import React from 'react';
 import { Text, View, StyleSheet, Dimensions, TouchableOpacity, ScrollView } from 'react-native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const { height, width } = Dimensions.get('window');
 
+type RootStackParamList = {
+  LoginScreen: undefined;
+};
+
 const SettingsScreeen = () => {
+    const navigation = useNavigation<any>();
+
+    const handleLogout = async () => {
+      await AsyncStorage.removeItem('token');
+      navigation.navigate('HomeScreen');
+    };
+
     return (
         <ScrollView>
             <View style={styles.Container}>
@@ -96,7 +108,7 @@ const SettingsScreeen = () => {
                </TouchableOpacity>
                </View>
                <View style={styles.Container}>
-               <TouchableOpacity>
+               <TouchableOpacity onPress={handleLogout}>
                 <Text style={styles.subTitle}>Log out</Text>
                </TouchableOpacity>
                </View>
