@@ -10,6 +10,11 @@ import saveFavoritesController from '../controller/SaveFavorites';
 import removeFavouritesController from '../controller/removeFavourite';
 import deleteListController from '../controller/deleteList';
 import { authenticateJWT } from '../middleWare/authenticateJwt';
+import updateProfileController from '../controller/updateProfile';
+import getProfileController from '../controller/getProfile';
+import uploadProfilePicController from '../controller/updateProfilePicture';
+import upload from '../middleWare/multer';
+
 const router = Router();
 
 router.post('/register', registerController);
@@ -22,6 +27,8 @@ router.post('/fetchLists',authenticateJWT,  fetchListsController);
 router.post('/saveFavourites',authenticateJWT,  saveFavoritesController);
 router.post('/removeFavourites',authenticateJWT, removeFavouritesController);
 router.post('/deleteList',authenticateJWT, deleteListController);
-
+router.put('/updateProfile', authenticateJWT, updateProfileController);
+router.get('/getProfile', authenticateJWT, getProfileController);
+router.post('/uploadProfilePic', authenticateJWT, upload.single('profilePic'),uploadProfilePicController);
 
 export default router;

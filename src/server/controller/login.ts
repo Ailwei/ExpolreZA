@@ -43,6 +43,7 @@ const loginController = async (req: Request, res: Response) => {
             { id: user.id, email: user.email }, JWT_SECRET,
             { expiresIn: "1h" }
         );
+        console.log("JWT token for user:", token)
         return res.status(200).json({ message: "Login successful", token, user: { email: user.email, firstName: user.firstName, lastName: user.lastName } });
 
     } catch (error) {
