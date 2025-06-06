@@ -21,6 +21,7 @@
     "axios": "^1.9.0",
     "expo": "~52.0.46",
     "expo-auth-session": "^6.0.3",
+    "expo-image-picker": "~16.0.6",
     "expo-status-bar": "~2.0.1",
     "install": "^0.13.0",
     "jwt-decode": "^4.0.0",

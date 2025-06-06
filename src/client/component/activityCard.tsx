@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Alert } from "react-native";
 import FavouritesModal from "./FavouriteModal";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -42,6 +42,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ item, favourites, userId, o
                 activityId: item.id,
             }, config);
             onFavouritesChanged();
+            Alert.alert('Success', 'Activity removed from favourites!');
         } else {
             setModalVisible(true);
         }
@@ -57,6 +58,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ item, favourites, userId, o
             activityId: item.id,
         }, config);
         setModalVisible(false);
+        Alert.alert('Success', 'Activity added to favourites!');
         onFavouritesChanged();
     };
 

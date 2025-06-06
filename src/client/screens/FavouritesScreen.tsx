@@ -152,11 +152,12 @@ const styles = StyleSheet.create({
     title: {
         position: "absolute",
         alignItems: "center",
-        fontSize: 30,
+        fontSize: 25,
         fontWeight: 'bold',
         marginLeft: 80,
         marginTop: 20,
-        justifyContent: "center"
+        justifyContent: "center",
+        
     },
     deleteListIcon: {
         position: "absolute",
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
         backgroundColor: "grey",
         borderWidth: 0.5,
         width: width * 0.13,
-        height: height * 0.05,
+        height: height * 0.063,
         borderRadius: 5,
         alignItems: "center",
         justifyContent: "center"

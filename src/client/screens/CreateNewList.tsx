@@ -122,15 +122,15 @@ const styles = StyleSheet.create({
     listNameInput: {
         marginTop: 50,
         fontSize: 18,
-        width: width * 0.95,
-        height: height * 0.06,
+        width: width * 0.92,
+        height: height * 0.07,
         borderWidth: 2,
         borderColor: "grey",
         paddingHorizontal: 10,
     },
     descriptionInput: {
         fontSize: 18,
-        width: width * 0.95,
+        width: width * 0.92,
         height: height * 0.2,
         borderWidth: 2,
         borderColor: "grey",
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
         textAlignVertical: "top",
     },
     dropdownWrapper: {
-        width: width * 0.95,
+        width: width * 0.92,
     },
     dropdownButton: {
         borderWidth: 2,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     },
     saveButton: {
         backgroundColor: "grey",
-        width: width * 0.95,
+        width: width * 0.92,
         height: height * 0.06,
         marginTop: 30,
         borderRadius: 10,
