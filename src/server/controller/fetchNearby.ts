@@ -14,43 +14,74 @@ const fetchNearbyController = async (req: Request, res: Response) => {
         }))
       });
     }
-   const { latitude, longitude, type } = req.body;
+    const { latitude, longitude, types } = req.body;
 
-const where: any = {
-  AND: [
-    {
-      data: {
-        path: ["geometry", "location", "lat"],
-        gte: latitude - 0.1,
-        lte: latitude + 0.1,
+    // Fetch all activities (or filter by types if provided)
+    let activities = await db.activity.findMany({
+      where: types && Array.isArray(types) && types.length > 0
+        ? {
+            data: {
+              path: ["types"],
+              array_contains: types
+            }
+          }
+        : undefined
+    });
+
+    // Filter for nearby activities (works for both Google and OSM data)
+    const filtered = activities.filter(act => {
+      const d = act.data;
+      if (!d || typeof d !== "object" || Array.isArray(d)) return false;
+
+      // Google Places-style
+      if (
+        "geometry" in d &&
+        d.geometry &&
+        typeof d.geometry === "object" &&
+        "location" in d.geometry &&
+        d.geometry.location &&
+        typeof d.geometry.location === "object" &&
+        d.geometry.location !== null &&
+        "lat" in d.geometry.location &&
+        "lng" in d.geometry.location &&
+        typeof (d.geometry.location as any).lat === "number" &&
+        typeof (d.geometry.location as any).lng === "number"
+      ) {
+        const loc = d.geometry.location as { lat: number; lng: number };
+        return (
+          loc.lat >= latitude - 0.1 &&
+          loc.lat <= latitude + 0.1 &&
+          loc.lng >= longitude - 0.1 &&
+          loc.lng <= longitude + 0.1
+        );
       }
-    },
-    {
-      data: {
-        path: ["geometry", "location", "lng"],
-        gte: longitude - 0.1,
-        lte: longitude + 0.1,
+      // OSM "way" (geometry array)
+      if ("geometry" in d && Array.isArray(d.geometry)) {
+        return d.geometry.some(
+          (pt: any) =>
+            pt.lat >= latitude - 0.1 &&
+            pt.lat <= latitude + 0.1 &&
+            pt.lon >= longitude - 0.1 &&
+            pt.lon <= longitude + 0.1
+        );
       }
+      // OSM "node"
+      if ("lat" in d && "lon" in d && typeof d.lat === "number" && typeof d.lon === "number") {
+        return (
+          d.lat >= latitude - 0.1 &&
+          d.lat <= latitude + 0.1 &&
+          d.lon >= longitude - 0.1 &&
+          d.lon <= longitude + 0.1
+        );
+      }
+      return false;
+    });
+
+    if (filtered.length === 0) {
+      return res.status(200).json({ message: "No activities found nearby.", activities: [] });
     }
-  ]
-};
 
-if (type) {
-  where.AND.push({
-    data: {
-      path: ["types"],
-      array_contains: type
-    }
-  });
-}
-
-const activities = await db.activity.findMany({ where });
-
-if (activities.length === 0) {
-  return res.status(200).json({ message: "No activities found nearby.", activities: [] });
-}
-
-res.status(200).json({ activities });
+    res.status(200).json({ activities: filtered });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
