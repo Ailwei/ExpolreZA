@@ -119,15 +119,24 @@ useFocusEffect(
             </View>
             {listsWithFavourites.map(list => (
                 <View style={styles.Container} key={list.id}>
-                    <TouchableOpacity onPress={() => onSelectList && onSelectList(list.id)}>
-                        <Text style={styles.favouriteTitle}>{list.listName || "Untitled List"}</Text>
-                        <Text style={styles.favouriteDescription}>{list.description || "No description"}</Text>
-                        <View style={styles.icon}>
-                            <FontAwesome5 name="bookmark" size={iconSize} color="green" />
-                        </View>
-                        <Text style={styles.subTitle}>{list.favourites.length} Favourites</Text>
+<TouchableOpacity
+  onPress={() => {
+    if (isModal && onSelectList) {
+        onSelectList(list.id);
+    } else {
+  
+   navigation.navigate('ViewFavouritesScreen', { favourites: list.favourites });
 
-                    </TouchableOpacity>
+    }
+  }}
+  >
+  <Text style={styles.favouriteTitle}>{list.listName || "Untitled List"}</Text>
+  <Text style={styles.favouriteDescription}>{list.description || "No description"}</Text>
+  <View style={styles.icon}>
+    <FontAwesome5 name="bookmark" size={iconSize} color="green" />
+  </View>
+  <Text style={styles.subTitle}>{list.favourites.length} Favourites</Text>
+</TouchableOpacity>
                     <TouchableOpacity onPress={() => deleteList(list.id)} style={styles.deleteListIcon}>
                         <View style={styles.deleteListIcon}>
                             <FontAwesome5 name="trash" size={deleteIconSize} color="grey" />

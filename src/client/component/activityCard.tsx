@@ -1,8 +1,12 @@
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../types/RootStackParamList";
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Alert } from "react-native";
 import FavouritesModal from "./FavouriteModal";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { Image } from "react-native";
 const FontAwesome5 = require('react-native-vector-icons/FontAwesome5').default;
 
 const { width, height } = Dimensions.get("window");
@@ -12,17 +16,21 @@ export interface ActivityCardProps {
     favourites: any[];
     userId: string | null;
     onFavouritesChanged: () => void;
+
 }
+type ActivityCardNavigationProp = StackNavigationProp<RootStackParamList, 'ActivityDetails'>;
+
 
 const ActivityCard: React.FC<ActivityCardProps> = ({ item, favourites, userId, onFavouritesChanged }) => {
     const [modalVisible, setModalVisible] = useState(false);
+    const navigation = useNavigation<ActivityCardNavigationProp>();
     const iconSize = 20;
 
-   const isFavourited = favourites.some(
-  fav =>
-    fav.activityId === item.id ||
-    (fav.activity && fav.activity.id === item.id)
-);
+    const isFavourited = favourites.some(
+        fav =>
+            fav.activityId === item.id ||
+            (fav.activity && fav.activity.id === item.id)
+    );
 
 
     const handleToggleFavourite = async (e: any) => {
@@ -63,7 +71,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ item, favourites, userId, o
     };
 
     const handleCardPress = () => {
-        console.log("Card pressed:", item.id);
+
+        navigation.navigate("ActivityDetails", { activity: item, isFavourited });
+
     };
 
     return (
@@ -84,28 +94,61 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ item, favourites, userId, o
                     onListCreated={onFavouritesChanged}
                 />
                 <View style={styles.details}>
-                    <Text style={styles.location}>Location: {item.data.locationName || item.data.name}</Text>
-                    <Text style={styles.info}>Place_id: {item.data.place_id}</Text>
-                    <Text style={styles.info}>Address: {item.data.formatted_address}</Text>
-                    <Text style={styles.info}>Rating: {item.data.rating || "N/A"}</Text>
-                    {Array.isArray(item.data.photos) && item.data.photos.length > 0 ? (
-                        item.data.photos.map((photo: any, idx: number) => (
-                            <Text style={styles.info} key={idx}>
-                                Photo Reference: {photo.photo_reference}, Size: {photo.width}x{photo.height}
-                            </Text>
-                        ))
-                    ) : (
-                        <Text style={styles.info}>Images: No image found</Text>
-                    )}
-                    <Text style={styles.info}>Types: {item.data.types ? item.data.types.join(", ") : "N/A"}</Text>
-                    <Text style={styles.info}>Opening Hours: {item.data.opening_hours ? item.data.opening_hours.open_now ? "Open Now" : "Closed" : "N/A"}</Text>
-
+                    <View style={{ width: "100%", height: 180, backgroundColor: "#eee", borderTopLeftRadius: 10, borderTopRightRadius: 10, overflow: "hidden" }}>
+                        {item.data.imageUrl ? (
+                            <Image
+                                source={{uri: item.data.imageUrl}}
+                                style={{ width: "100%", height: "100%", borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
+                                resizeMode="cover"
+                            />
+                        ) : (
+                            <Image
+                                source={require('../assets/trail1.jpeg')}
+                                style={{ width:  "100%", height: "100%", borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
+                                resizeMode="cover"
+                            />
+                        )}
+                    </View>
+                   <Text style={styles.location}>
+  Location: {item.data.locationName 
+    || item.data.formatted_address 
+    || (item.data.tags && item.data.tags.name) 
+    || "Unnamed Trail"}
+</Text>
+<Text style={styles.info}>
+  {item.data.rating 
+    || (item.data.tags && item.data.tags.stars) 
+    || "N/A"}
+</Text>
+<Text style={styles.info}>
+  {item.data.types
+    ? item.data.types.join(", ")
+    : (item.data.tags && Object.values(item.data.tags).join(", "))
+    || "N/A"}
+</Text>
+<Text style={styles.info}>
+  {item.data.opening_hours
+    ? (
+      <Text style={{ color: item.data.opening_hours.open_now ? "green" : "red", fontWeight: "bold" }}>
+        {item.data.opening_hours.open_now ? "Open Now" : "Closed"}
+      </Text>
+    )
+    : "N/A"}
+   
+</Text>
+<Text style={styles.info}>
+  {item.data.tags?.city 
+    || item.data.tags?.["addr:city"] 
+    || item.data.tags?.["addr:town"] 
+    || item.data.tags?.["addr:village"] 
+    || item.data.tags?.["addr:place"] 
+    || "Unknown City"}
+</Text>
                 </View>
             </View>
         </TouchableOpacity>
     );
 };
-
 const styles = StyleSheet.create({
     card: {
         backgroundColor: "#fff",
@@ -119,17 +162,20 @@ const styles = StyleSheet.create({
         elevation: 3,
         width: width * 0.9,
         alignSelf: "center",
-        height: height * 0.3,
+        height: height * 0.5,
         position: "relative",
     },
     details: {
-        padding: 10,
+        height: height * 0.9,
+        padding: 0,
+        bottom: 30,
     },
     location: {
         fontSize: 18,
         fontWeight: "bold",
         color: "#333",
         marginBottom: 5,
+        marginTop: 30,
     },
     info: {
         fontSize: 14,
@@ -144,6 +190,10 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 5,
         zIndex: 10,
+        width: width * 0.1,
+        height: width * 0.1,
+        justifyContent: "center",
+        alignItems: "center",
     }
 });
 

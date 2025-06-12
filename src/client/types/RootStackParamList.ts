@@ -1,26 +1,29 @@
 export type RootStackParamList = {
-   Explore: {
+  Explore: {
     screen:
-    | 'EditProfileScreen'
-    | 'SettingsScreen'
-    | 'HomeScreen'
-    | 'ShareProfileScreen'
-    | 'SettingsScreen'
-    | 'SignUpScreen'
-    | 'SignInScreen'
-    | 'SearchFilterScreen'
-    | 'CreateNewListScreen'
-    | 'MainScreen'
-    | 'ForgotPassword';
-    params?: {
-      onListCreated?: (newListId: string) => void;
-    };
+      | 'EditProfileScreen'
+      | 'SettingsScreen'
+      | 'HomeScreen'
+      | 'ShareProfileScreen'
+      | 'SignUpScreen'
+      | 'SignInScreen'
+      | 'SearchFilterScreen'
+      | 'CreateNewListScreen'
+      | 'MainScreen'
+      | 'ForgotPassword'
+      | 'ActivityDetails'
+      | 'ViewFavouritesScreen';
+
+    params?: any;
   };
-    Home: undefined;
-    SignUpScreen: undefined; 
-    Profile: undefined, 
-    SearchFilterScreen: undefined;
-    SignInScreen: undefined;
-    EditProfileScreen: undefined;
-    ForgotPassword: undefined;
-  };
+  Home: undefined;
+  SignUpScreen: undefined;
+  Profile: undefined;
+  SearchFilterScreen: undefined;
+  SignInScreen: undefined;
+  EditProfileScreen: undefined;
+  ForgotPassword: undefined;
+  ActivityDetails: { activity: any; isFavourited: boolean };
+  ViewFavouritesScreen: { favourites: any[] };
+
+};

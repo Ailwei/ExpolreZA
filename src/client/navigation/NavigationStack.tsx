@@ -1,10 +1,12 @@
 import React from 'react';
+import FavouriteHeaderIcon from '../component/FavouriteIconHedaer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native';
 const FontAwesome5 = require('react-native-vector-icons/FontAwesome5').default;
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { View } from 'react-native';
+
+
 // Screens
 import HomeScreen from '../screens/HomeScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
@@ -22,12 +24,16 @@ import { RootStackParamList } from '../types/RootStackParamList';
 import { NavigationProp } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import SettingsScreeen from '../screens/SettingsScreen';
-import CreateFavoriteScreen from '../screens/CreateNewList';
 import ForgotPassword from '../screens/forgotPassowrd';
 import CreateNewListScreen from '../screens/CreateNewList';
+import ActivityDetails from '../screens/activityDetails';
+import ShareHeaderIcon from '../component/shareIcon';
+import CompletedHeaderIcon from '../component/comlptedIcon';
+import ViewFavouritesScreen from '../screens/viewFavouritesScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+const FavouritesStack = createStackNavigator();
 
 function MainStack() {
   return (
@@ -47,10 +53,43 @@ function MainStack() {
       <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} options={{ headerShown: true }} />
       <Stack.Screen name="SettingsScreen" component={SettingsScreeen} options={{ headerShown: true }} />
       <Stack.Screen name="SearchFilterScreen" component={SearchFilterScreen} options={{ headerShown: true }} />
+      <Stack.Screen
+        name="ActivityDetails"
+        component={ActivityDetails}
+        options={({ route }) => ({
+          headerShown: true,
+          title: '',
+          headerRight: () => {
+            const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+            const params = route.params as { isFavourited: boolean };
+            return (
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
+                
+                <ShareHeaderIcon isFavourited={false} onPress={() => { }} />
+                <CompletedHeaderIcon isFavourited={false} onPress={() => { }} />
+                <FavouriteHeaderIcon
+                  isFavourited={params?.isFavourited ?? false}
+                  onPress={() => {
+                    navigation.navigate('Favourites' as never);
+                  }}
+                /> 
+              </View>
+            );
+          },
+        })}
+
+      />
     </Stack.Navigator>
   );
 }
-
+function FavouritesStackScreen() {
+  return (
+    <FavouritesStack.Navigator>
+      <FavouritesStack.Screen name="FavouritesScreen" component={FavouritesScreen}  options={{headerShown: true, title:"Lists"}}/>
+      <FavouritesStack.Screen name="ViewFavouritesScreen" component={ViewFavouritesScreen} options={{ headerShown: true, title: "Favourites" }} />
+    </FavouritesStack.Navigator>
+  );
+}
 function BottomTabs() {
   return (
     <Tab.Navigator
@@ -103,7 +142,7 @@ function BottomTabs() {
         }}
       />
       <Tab.Screen name="Community" component={CommunityScreen} />
-      <Tab.Screen name="Favourites" component={FavouritesScreen} />
+      <Tab.Screen name="Favourites" component={FavouritesStackScreen} options={{headerShown: false}} /> 
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}

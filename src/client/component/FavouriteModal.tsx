@@ -19,10 +19,13 @@ const FavouritesModal: React.FC<FavouritesModalProps> = ({ visible, onClose, onS
                     isModal
                     onListCreated={onListCreated}
                 />
+                
                 <TouchableOpacity onPress={onClose} style={{ marginTop: 10 }}>
                     <Text style={{ color: "red", textAlign: "center" }}>Cancel</Text>
                 </TouchableOpacity>
+                
             </View>
+        
         </View>
     </Modal>
 );
