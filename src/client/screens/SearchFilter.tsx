@@ -17,6 +17,16 @@ const SearchFilterScreen = () => {
   const filters = ["Best Match", "Popular", "Nearby"];
   const activities = ["Hiking", "Fishing", "Camping", "Waterfalls"];
   const dificultyLevels = ["Easy", "Medium", "Hard"];
+  
+  const clearFilter = () => {
+  setSelectedFilter("Best Combination");
+  setDistance(80);
+  setSelectedRating(4.5);
+  setSelectedActivity("Hiking");
+  setSelectedDificulty("Easy");
+  setSelectedRouteType("Circular");
+};
+
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
 
@@ -183,7 +193,7 @@ const SearchFilterScreen = () => {
       <View style={styles.filterButtonContainer}>
         <TouchableOpacity
           style={styles.filterButton}
-          onPress={() => console.log("Clear Filters")}
+          onPress={() => clearFilter()}
         >
           < Text style={styles.filterButtonText}>
             Clear Filters
