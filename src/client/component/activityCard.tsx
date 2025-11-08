@@ -73,6 +73,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ item, favourites, userId, o
     const handleCardPress = () => {
 
         navigation.navigate("ActivityDetails", { activity: item, isFavourited });
+        console.log("Item data:", item.data);
 
     };
 
@@ -95,54 +96,35 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ item, favourites, userId, o
                 />
                 <View style={styles.details}>
                     <View style={{ width: "100%", height: 180, backgroundColor: "#eee", borderTopLeftRadius: 10, borderTopRightRadius: 10, overflow: "hidden" }}>
-                        {item.data.imageUrl ? (
+                        {item.data.tags?.imageUrl && (
                             <Image
-                                source={{uri: item.data.imageUrl}}
+                                source={{ uri: item.data.tags?.imageUrl }}
                                 style={{ width: "100%", height: "100%", borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
                                 resizeMode="cover"
-                            />
-                        ) : (
-                            <Image
-                                source={require('../assets/trail1.jpeg')}
-                                style={{ width:  "100%", height: "100%", borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
-                                resizeMode="cover"
+                                onError={() => console.error("Failed to load image from:", item.data.tags.imageUrl)}
                             />
                         )}
                     </View>
+
                    <Text style={styles.location}>
-  Location: {item.data.locationName 
-    || item.data.formatted_address 
-    || (item.data.tags && item.data.tags.name) 
-    || "Unnamed Trail"}
+   {item.data.tags?.name || "No name available"}
+
+    
 </Text>
 <Text style={styles.info}>
-  {item.data.rating 
-    || (item.data.tags && item.data.tags.stars) 
-    || "N/A"}
 </Text>
 <Text style={styles.info}>
-  {item.data.types
-    ? item.data.types.join(", ")
-    : (item.data.tags && Object.values(item.data.tags).join(", "))
-    || "N/A"}
+    {item.data.tags?.rating ? `Rating: ${item.data.tags.rating}` : "No rating available"}
+  
 </Text>
 <Text style={styles.info}>
-  {item.data.opening_hours
-    ? (
-      <Text style={{ color: item.data.opening_hours.open_now ? "green" : "red", fontWeight: "bold" }}>
-        {item.data.opening_hours.open_now ? "Open Now" : "Closed"}
-      </Text>
-    )
-    : "N/A"}
+    {item.data.tags?.user_ratings_total ? `Total Ratings: ${item.data.tags.user_ratings_total}` : "No ratings available"}
+
    
 </Text>
 <Text style={styles.info}>
-  {item.data.tags?.city 
-    || item.data.tags?.["addr:city"] 
-    || item.data.tags?.["addr:town"] 
-    || item.data.tags?.["addr:village"] 
-    || item.data.tags?.["addr:place"] 
-    || "Unknown City"}
+    {item.data.type ? `Type: ${item.data.type}` : "No type available"}
+
 </Text>
                 </View>
             </View>

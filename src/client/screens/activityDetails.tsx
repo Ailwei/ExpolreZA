@@ -2,12 +2,12 @@ import React from "react";
 import Config from 'react-native-config';
 import { useRoute } from "@react-navigation/native";
 import { View, Text, StyleSheet, ScrollView, Dimensions, Image } from "react-native";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 const FontAwesome5 = require('react-native-vector-icons/FontAwesome5').default;
-import MapboxGL from "@rnmapbox/maps";
+
 
 const { width, height } = Dimensions.get('window');
 
-MapboxGL.setAccessToken("pk.eyJ1IjoiYWlsd2VpIiwiYSI6ImNtYnNicG53YzBnMHYyanF0ZnVtNThjcGgifQ.mhUpVTBLKoo7fiGuBtMH3Q");
 
 const ActivityDetails = () => {
   const route = useRoute();
@@ -101,20 +101,25 @@ const ActivityDetails = () => {
       <Text>Elevation gain</Text>
       <Text>Description</Text>
 
-      <View style={styles.screenShotMap}>
+       <View style={styles.screenShotMap}>
         {lat && lng ? (
-          <MapboxGL.MapView style={{ flex: 1 }} scrollEnabled={false}>
-            <MapboxGL.Camera
-              zoomLevel={14}
-              centerCoordinate={[lng, lat]}
+          <MapView
+            provider={PROVIDER_GOOGLE}
+            style={{ flex: 1 }}
+            region={{
+              latitude: lat,
+              longitude: lng,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            }}
+            scrollEnabled={false}
+            zoomEnabled={true}
+          >
+            <Marker
+              coordinate={{ latitude: lat, longitude: lng }}
+              title={activity.data.name || "Trail Location"}
             />
-            <MapboxGL.PointAnnotation
-              id="activity-location"
-              coordinate={[lng, lat]}
-            >
-              <View />
-            </MapboxGL.PointAnnotation>
-          </MapboxGL.MapView>
+          </MapView>
         ) : (
           <Text>No location data available</Text>
         )}

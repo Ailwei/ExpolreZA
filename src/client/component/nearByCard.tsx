@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, Dimensions } from "react-native";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+// @ts-ignore - no type declarations for @react-native-async-storage/async-storage
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ActivityCard from "./activityCard";
 
@@ -17,14 +18,14 @@ const Nearby = () => {
     const [userId, setUserId] = useState<string | null>(null);
     const [favourites, setFavourites] = useState<any[]>([]);
 
-   const fetchFavourites = async () => {
-    const token = await AsyncStorage.getItem("token");
-    const config = {
-        headers: { Authorization: `Bearer ${token}` }
+    const fetchFavourites = async () => {
+        const token = await AsyncStorage.getItem("token");
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+        const res = await axios.post("http://192.168.18.29:3000/api/fetchFavourites", {}, config);
+        setFavourites(res.data.favourites || []);
     };
-    const res = await axios.post("http://192.168.18.29:3000/api/fetchFavourites", {}, config);
-    setFavourites(res.data.favourites || []);
-};
 
     useEffect(() => {
         const fetchUserIdAndFavourites = async () => {
@@ -53,11 +54,27 @@ const Nearby = () => {
     return (
         <View style={{ flex: 1 }}>
             <Text style={styles.info}>Nearby</Text>
+
             <FlatList
                 data={activities}
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => (
+                    console.log("Rendering item:",
+                        item.data.tags.name,
+                        item.data.imageUrl,
+                        item.data.tags.rating,
+                        item.data.tags.user_ratings_total,
+                        item.data.type,
+                        item.data.source,
+                        item.data.tags.formatted_address,
+                        item.data.tags.sac_scale,
+                    ),
+
+
+
+
                     <ActivityCard
+
                         item={item}
                         favourites={favourites}
                         userId={userId}

@@ -1,7 +1,6 @@
 import React , {useState} from 'react';
 import { View, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../types/RootStackParamList';
 import SearchFilter from '../screens/SearchFilter';
@@ -17,22 +16,6 @@ const Header = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         {/* Google Places Autocomplete */}
-        <GooglePlacesAutocomplete
-          placeholder="Search for a location"
-          onPress={(data, activityDetails = null) => {
-            console.log(data, activityDetails);
-            setIsSearching(false);
-          }}
-          query={{
-            key: "09058695789ugrjhgbgbtvh4b756584576",
-            language: "en",
-          }}
-          styles={{
-            textInput: styles.searchInput,
-            container: styles.searchContainer,
-          
-          }}
-        />
         <Icon name="search" size={20} color="gray" style={styles.searchIcon} />
 
         {/* Filter Button */}
