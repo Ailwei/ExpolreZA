@@ -27,7 +27,6 @@ const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
     navigation.navigate('SignInScreen');
     }catch (error: any) {
   if (error.response?.data?.errors) {
-    // Backend returns an array of errors
     const fieldErrors: { [key: string]: string } = {};
     error.response.data.errors.forEach((err: { field: string; message: string }) => {
       fieldErrors[err.field] = err.message;
@@ -39,6 +38,7 @@ const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
   console.error('Error registering user:', error);
   }
 };
+const isFormValid = email && password && firstName && lastName;
 
   return (
     <View style={styles.container}>
@@ -100,12 +100,15 @@ const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
 
       {/* Sign Up Button */}
       <TouchableOpacity
-        onPress={handleRegisterUser}
-
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>Sign Up</Text>
-      </TouchableOpacity>
+  onPress={handleRegisterUser}
+  style={[
+    styles.button,
+    { backgroundColor: isFormValid ? 'green' : 'grey' }
+  ]}
+  disabled={!isFormValid}
+>
+  <Text style={styles.buttonText}>Sign Up</Text>
+</TouchableOpacity>
 
       <Text>Already have  an acount?</Text>
       <TouchableOpacity

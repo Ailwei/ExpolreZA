@@ -36,6 +36,7 @@ const SignInScreen = () => {
   }
 }
   }
+ const isFormValid = email && password;
 
   return (
     <View style={styles.container}>
@@ -69,13 +70,17 @@ const SignInScreen = () => {
 {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
 {errors.general && <Text style={styles.errorText}>{errors.general}</Text>}
       {/* Sign in Button */}
-      <TouchableOpacity
-        onPress={handleSignIn}
+     <TouchableOpacity
+  onPress={handleSignIn}
+  style={[
+    styles.button,
+    { backgroundColor: isFormValid ? 'green' : 'grey' }
+  ]}
+  disabled={!isFormValid}
+>
+  <Text style={styles.buttonText}>Sign In</Text>
+</TouchableOpacity>
 
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>Sign In</Text>
-      </TouchableOpacity>
 
       <Text>Not Yet registered?</Text>
       <TouchableOpacity

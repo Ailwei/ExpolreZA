@@ -127,20 +127,33 @@ function BottomTabs() {
         };
       }}
     >
-      <Tab.Screen
-        name="Explore"
-        component={MainStack}
-        options={({ route }) => {
-          const routeName = getFocusedRouteNameFromRoute(route) ?? 'HomeScreen';
-          const hideTabBar =
-            routeName === 'HomeScreen' || routeName === 'SearchFilterScreen' || routeName === 'SignUpScreen';
+    <Tab.Screen
+  name="Explore"
+  component={MainStack}
+  listeners={({ navigation, route }) => ({
+    tabPress: e => {
+      const routeName = getFocusedRouteNameFromRoute(route) ?? 'HomeScreen';
 
-          return {
-            headerShown: false,
-            tabBarStyle: hideTabBar ? { display: 'none' } : undefined,
-          };
-        }}
-      />
+      if (navigation.isFocused() && routeName !== 'HomeScreen') {
+        e.preventDefault();
+      }
+    },
+  })}
+  options={({ route }) => {
+    const routeName = getFocusedRouteNameFromRoute(route) ?? 'HomeScreen';
+    const hideTabBar =
+      routeName === 'HomeScreen' ||
+      routeName === 'SearchFilterScreen' ||
+      routeName === 'SignUpScreen' ||
+      routeName === 'SignInScreen';
+
+    return {
+      headerShown: false,
+      tabBarStyle: hideTabBar ? { display: 'none' } : undefined,
+    };
+  }}
+/>
+
       <Tab.Screen name="Community" component={CommunityScreen} />
       <Tab.Screen name="Favourites" component={FavouritesStackScreen} options={{headerShown: false}} /> 
       <Tab.Screen
