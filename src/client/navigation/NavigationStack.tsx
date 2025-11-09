@@ -7,7 +7,6 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { View } from 'react-native';
 
 
-// Screens
 import HomeScreen from '../screens/HomeScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import ProfileScreen from '../screens/ProfileScreen';

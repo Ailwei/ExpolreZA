@@ -8,7 +8,8 @@
     "skipLibCheck": true,
     "jsx": "react-jsx",
     "customConditions": ["react-native"],
-    "types": []
+    "types": [],
+    "lib": ["ES2015", "DOM"] 
   },
   "include": ["**/*"],
   "exclude": ["node_modules", "node_modules/expo/**"]
