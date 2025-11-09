@@ -5,7 +5,11 @@
     "version": "1.0.0",
     "sdkVersion": "54.0.0",
     "android": {
-      "package": "com.ailwei.expolreza"
+      "package": "com.ailwei.expolreza",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
     "extra": {}
   }

@@ -1,18 +1,21 @@
 import React from "react";
 import Config from 'react-native-config';
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useRoute } from "@react-navigation/native";
-import { View, Text, StyleSheet, ScrollView, Dimensions, Image } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Dimensions, Image, TouchableOpacity } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 const FontAwesome5 = require('react-native-vector-icons/FontAwesome5').default;
-
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../types/RootStackParamList";
 
 const { width, height } = Dimensions.get('window');
+type NavigationProp = StackNavigationProp<RootStackParamList, "ActivityDetails">;
 
 
 const ActivityDetails = () => {
+  const navigation = useNavigation<NavigationProp>();
   const route = useRoute();
   const { activity } = route.params as { activity: any };
-  console.log("Activity data:", activity.data);
 
   let lat: number | null = null;
   let lng: number | null = null;
@@ -103,6 +106,7 @@ const ActivityDetails = () => {
 
        <View style={styles.screenShotMap}>
         {lat && lng ? (
+          <>
           <MapView
             provider={PROVIDER_GOOGLE}
             style={{ flex: 1 }}
@@ -120,6 +124,17 @@ const ActivityDetails = () => {
               title={activity.data.name || "Trail Location"}
             />
           </MapView>
+            <TouchableOpacity
+        style={StyleSheet.absoluteFill}
+        onPress={() =>
+          navigation.navigate("ViewMapScreen", {
+            lat,
+            lng,
+            title: activity.data.name || "Trail Location",
+          })
+        }
+      />
+    </>
         ) : (
           <Text>No location data available</Text>
         )}

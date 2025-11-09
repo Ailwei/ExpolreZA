@@ -29,6 +29,7 @@ import ActivityDetails from '../screens/activityDetails';
 import ShareHeaderIcon from '../component/shareIcon';
 import CompletedHeaderIcon from '../component/comlptedIcon';
 import ViewFavouritesScreen from '../screens/viewFavouritesScreen';
+import ViewMapScreen from '../screens/ViewMapScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -52,6 +53,7 @@ function MainStack() {
       <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} options={{ headerShown: true }} />
       <Stack.Screen name="SettingsScreen" component={SettingsScreeen} options={{ headerShown: true }} />
       <Stack.Screen name="SearchFilterScreen" component={SearchFilterScreen} options={{ headerShown: true }} />
+      <Stack.Screen name="ViewMapScreen" component={ViewMapScreen} options={{ headerShown: true, title: "Map" }}/>
       <Stack.Screen
         name="ActivityDetails"
         component={ActivityDetails}
