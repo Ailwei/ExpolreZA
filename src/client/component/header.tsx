@@ -1,5 +1,5 @@
 import React , {useState} from 'react';
-import { View, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView } from 'react-native';
+import { View,TextInput, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../types/RootStackParamList';
@@ -11,13 +11,37 @@ const { height, width } = Dimensions.get('window');
 const Header = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [isSearching, setIsSearching] = useState(false);
+    const [searchText, setSearchText] = useState('');
+
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        {/* Google Places Autocomplete */}
-        <Icon name="search" size={20} color="gray" style={styles.searchIcon} />
-
+                
+{!isSearching ? (
+          <TouchableOpacity onPress={() => setIsSearching(true)}>
+            <Icon name="search" size={22} color="gray" />
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.searchContainer}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search..."
+              value={searchText}
+              onChangeText={setSearchText}
+              autoFocus
+            />
+           <TouchableOpacity
+    onPress={() => {
+      setSearchText('');
+      setIsSearching(false); 
+    }}
+    style={styles.closeButton}
+  >
+              <Icon name="times" size={18} color="gray" />
+            </TouchableOpacity>
+          </View>
+        )}
         {/* Filter Button */}
         <TouchableOpacity 
         onPress={() => navigation.navigate('SearchFilterScreen')}
@@ -33,45 +57,43 @@ const Header = () => {
 const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: '#fff',
-    marginTop: 2,
   },
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
-    height: height * 0.2,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: 'white',
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
+    height: height  * 0.05,
   },
   searchContainer: {
     flex: 1,
-    marginRight: 10,
-  },
-  searchInput: {
-    height: height * 0.06,
-    borderColor: 'gray',
-    borderWidth: 3,
-    borderRadius: 10,
-    paddingLeft: 80,
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#fff',
-    justifyContent: "space-between",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    height: 40,
+    marginRight: 10,
+},
+  searchInput: {
+    flex: 1,
+    height: 40,
   },
   filterButton: {
     padding: 10,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'absolute',
     right: 20,
   },
   searchIcon: {
-   left: 20,
-    height: height * 0.1,
-    position: 'absolute',
-    bottom: 10,
-   
+    marginRight: 8,
+  },
+  closeButton: {
+    marginLeft: 8,
   },
 });
 
