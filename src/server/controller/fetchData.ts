@@ -1,109 +1,46 @@
-import axios from "axios";
-import { saveOverpassElement } from "./saveData";
-import { fetchGooglePlaceByCoords, getGooglePhotoUrl } from "./googlePlaces";
+import { Request, Response } from "express";
+import { fetchActivitiesFromOverpass } from "../sutils/fecthOverpass";
+import { saveOverpassElement } from "../sutils/saveData";
 
 /**
- * @param latitude number
- * @param longitude number
- * @param radiusMeters number
- * @returns Promise<any[]> Array of OSM ways with geometry
+ * Controller to fetch activities from Overpass API and save them in the DB
  */
+export default async function fetchDataController(req: Request, res: Response) {
+  const { latitude, longitude, radius } = req.query;
 
-export async function fetchTrailsFromOSM(latitude: number, longitude: number, radiusMeters = 10000) {
-  const query = `
-    [out:json];
-    (
-      way(around:${radiusMeters},${latitude},${longitude})["highway"="path"];
-      way(around:${radiusMeters},${latitude},${longitude})["highway"="footway"];
-      way(around:${radiusMeters},${latitude},${longitude})["natural"="waterfall"];
-      way(around:${radiusMeters},${latitude},${longitude})["tourism"="camp_site"];
-      node(around:${radiusMeters},${latitude},${longitude})["mountain_pass"="yes"];
-      way(around:${radiusMeters},${latitude},${longitude})["leisure"="fishing"];
-      node(around:${radiusMeters},${latitude},${longitude})["leisure"="fishing"];
-      way(around:${radiusMeters},${latitude},${longitude})["natural"="water"];
-      way(around:${radiusMeters},${latitude},${longitude})["waterway"="river"];
-      way(around:${radiusMeters},${latitude},${longitude})["waterway"="stream"];
-      way(around:${radiusMeters},${latitude},${longitude})["waterway"="riverbank"];
-    );
-    out geom;
-  `;
-
-  const response = await axios.post(
-    "https://overpass-api.de/api/interpreter",
-    query,
-    { headers: { "Content-Type": "text/plain" } }
-  );
-
-  const results = [];
-
-  for (const element of response.data.elements) {
-    let name = element.tags?.name;
-    let imageUrl = element.tags?.image;
-    let rating = element.tags?.rating;
-    let user_ratings_total = element.tags?.user_ratings_total;
-    let formatted_address = element.tags?.address;
-
-    const point = Array.isArray(element.geometry) && element.geometry.length > 0
-      ? element.geometry[0]
-      : null;
-
-    let googleData: any = null;
-    if (
-      point &&
-      (
-        !name ||
-        !imageUrl ||
-        !rating ||
-        !user_ratings_total ||
-        !formatted_address
-      )
-    ) {
-      googleData = await fetchGooglePlaceByCoords(point.lat, point.lon);
-    }
-
-    if (googleData) {
-      if (!name && googleData.name) name = googleData.name;
-      if (!imageUrl && googleData.photoRef) imageUrl = getGooglePhotoUrl(googleData.photoRef);
-      if (!rating && googleData.rating) rating = googleData.rating;
-      if (!user_ratings_total && googleData.user_ratings_total) user_ratings_total = googleData.user_ratings_total;
-      if (!formatted_address && googleData.formatted_address) formatted_address = googleData.formatted_address;
-    }
-
-    await saveOverpassElement({
-      ...element,
-      tags: {
-        ...element.tags,
-        name,
-        imageUrl,
-        rating,
-        user_ratings_total,
-        formatted_address,
-      }
-    });
-
-    results.push({
-      id: element.id,
-      type: element.type,
-      tags: {
-        ...element.tags,
-        name,
-        imageUrl,
-        rating,
-        user_ratings_total,
-        formatted_address,
-      },
-      geometry: element.geometry,
-      data: {
-        name: name || "Unnamed Trail",
-        imageUrl: imageUrl || null,
-        rating: rating || null,
-        user_ratings_total: user_ratings_total || null,
-        formatted_address: formatted_address || null,
-        lat: Array.isArray(element.geometry) && element.geometry.length > 0 ? element.geometry[0].lat : null,
-        lon: Array.isArray(element.geometry) && element.geometry.length > 0 ? element.geometry[0].lon : null,
-      }
-    });
+  if (!latitude || !longitude) {
+    return res.status(400).json({ error: "latitude and longitude required" });
   }
 
-  return results;
+  try {
+    console.log("fetching activities from Overpass...");
+    const elements = await fetchActivitiesFromOverpass(
+      Number(latitude),
+      Number(longitude),
+      radius ? Number(radius) : 60000
+    );
+
+    console.log(`Total elements fetched: ${elements.length}`);
+
+    if (elements.length === 0) {
+      return res.json({ elements: [], message: "No activities found" });
+    }
+
+    // Chunking setup
+    const chunkSize = 100;
+    console.log(`Saving elements in chunks of ${chunkSize}...`);
+
+    for (let i = 0; i < elements.length; i += chunkSize) {
+      const chunk = elements.slice(i, i + chunkSize);
+      await Promise.all(chunk.map((el: any) => saveOverpassElement(el, "osm")));
+      console.log(`Saved chunk ${i / chunkSize + 1} / ${Math.ceil(elements.length / chunkSize)}`);
+    }
+
+    console.log("All elements saved successfully!");
+
+    res.json({ elements, message: `${elements.length} activities fetched and saved.` });
+  } catch (err: any) {
+    console.error("Error fetching or saving activities:", err);
+    res.status(500).json({ error: "Failed to fetch or save data", details: err.message });
+  }
 }
