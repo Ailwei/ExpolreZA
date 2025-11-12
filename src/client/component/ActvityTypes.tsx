@@ -130,11 +130,11 @@ const styles = StyleSheet.create({
 
     },
     text: {
-        fontSize: 15,
+        fontSize: 12,
         fontWeight: '600',
         color: "#333",
         textAlign: 'left',
-        paddingLeft: 10,
+        paddingLeft: 8,
 
     },
 })
