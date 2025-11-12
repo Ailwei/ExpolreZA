@@ -23,10 +23,6 @@ const MainScreen = () => {
         <ActivityTypes selectedtype={selectedType} onSelectType={setSelectedType} />
       </View>
 
-     
-        {/* Header Section */}
-
-
         {/* Content Section */}
         <View style={styles.content}>
           {selectedType === "NearBy" && <Nearby />}
@@ -51,7 +47,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    height: height,
+    height: height * 0.9,
     width: width,
   },
 });

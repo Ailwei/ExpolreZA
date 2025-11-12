@@ -106,26 +106,66 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ item, favourites, userId, o
                         )}
                     </View>
 
-                   <Text style={styles.location}>
-   {item.data.tags?.name || "No name available"}
+                  <View>
+  <Text style={styles.location}>
+    {item.data.name || item.data.tags?.name || "Unnamed Place"}
+  </Text>
 
-    
-</Text>
-<Text style={styles.info}>
-</Text>
-<Text style={styles.info}>
-    {item.data.tags?.rating ? `Rating: ${item.data.tags.rating}` : "No rating available"}
+  {item.data.tags?.distance && (
+    <Text style={styles.info}>Distance: {item.data.tags.distance}</Text>
+  )}
+  {item.data.category && (
+    <Text style={styles.info}>Category: {item.data.category}</Text>
+  )}
+
+  {item.data.tags?.access && (
+    <Text style={styles.info}>Access: {item.data.tags.access}</Text>
+  )}
+  {item.data.tags?.roundtrip && (
+        <Text style={styles.info}>Round Trip: {item.data.tags.roundtrip}</Text>
+  )}
+
+  {item.data.tags?.rating && (
+    <Text style={styles.info}>Rating: {item.data.tags.rating}</Text>
+  )}
+   {item.data.tags?.horse && (
+    <Text style={styles.info}>Horse: {item.data.tags.horse}</Text>
+  )}
+{item.data.tags?.bicycle && (
+    <Text style={styles.info}>Bicycle: {item.data.tags.bicycle}</Text>
+  )}
+  {item.data.tags?.moto_vehicle && (
+    <Text style={styles.info}>Moto Vehicle: {item.data.tags.moto_vehicle}</Text>
+  )}
+  {item.data.tags?.smoothness && (
+    <Text style={styles.info}>Smoothness: {item.data.tags.smoothness}</Text>
+  )}
+   {item.data.tags?.surface && (
+    <Text style={styles.info}>Surface: {item.data.tags.surface}</Text>
+  )}
+   {item.data.tags?.bridge && (
+    <Text style={styles.info}>Bridge: {item.data.tags.bridge}</Text>
+  )}
+   {item.data.tags?.informal && (
+    <Text style={styles.info}>Informal: {item.data.tags.informal}</Text>
+  )}
+   {item.data.tags?.maxspeed && (
+    <Text style={styles.info}>Max speed: {item.data.tags.maxspeed}</Text>
+  )}
+  {item.data.tags?.dog && (
+    <Text style={styles.info}>Dog: {item.data.tags.dog}</Text>
+  )}
   
-</Text>
-<Text style={styles.info}>
-    {item.data.tags?.user_ratings_total ? `Total Ratings: ${item.data.tags.user_ratings_total}` : "No ratings available"}
+  
 
-   
-</Text>
-<Text style={styles.info}>
-    {item.data.type ? `Type: ${item.data.type}` : "No type available"}
 
-</Text>
+  {item.data.tags?.user_ratings_total && (
+    <Text style={styles.info}>
+      Total Ratings: {item.data.tags.user_ratings_total}
+    </Text>
+  )}
+</View>
+
                 </View>
             </View>
         </TouchableOpacity>
@@ -144,7 +184,7 @@ const styles = StyleSheet.create({
         elevation: 3,
         width: width * 0.9,
         alignSelf: "center",
-        height: height * 0.5,
+        height: height * 0.4,
         position: "relative",
     },
     details: {
@@ -156,13 +196,16 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
         color: "#333",
-        marginBottom: 5,
+        marginBottom: 10,
         marginTop: 30,
+        paddingLeft: 10
+
     },
     info: {
         fontSize: 14,
         color: "#555",
         marginBottom: 3,
+        paddingLeft: 10
     },
     favouriteIcon: {
         position: "absolute",

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, Dimensions } from "react-native";
+import { View, Text, StyleSheet, FlatList, Dimensions, ActivityIndicator } from "react-native";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-// @ts-ignore - no type declarations for @react-native-async-storage/async-storage
+// @ts-ignore
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ActivityCard from "./activityCard";
+import { getCurrentLocation } from "../utils/location";
 
 const { width, height } = Dimensions.get("window");
 
@@ -17,14 +18,18 @@ const Nearby = () => {
     const [activities, setActivities] = useState<Activity[]>([]);
     const [userId, setUserId] = useState<string | null>(null);
     const [favourites, setFavourites] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
     const fetchFavourites = async () => {
         const token = await AsyncStorage.getItem("token");
-        const config = {
-            headers: { Authorization: `Bearer ${token}` }
-        };
-        const res = await axios.post("http://192.168.18.29:3000/api/fetchFavourites", {}, config);
-        setFavourites(res.data.favourites || []);
+        if (!token) return;
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        try {
+            const res = await axios.post("http://192.168.18.29:3000/api/fetchFavourites", {}, config);
+            setFavourites(res.data.favourites || []);
+        } catch (err) {
+            console.error("Error fetching favourites:", err);
+        }
     };
 
     useEffect(() => {
@@ -40,41 +45,60 @@ const Nearby = () => {
     }, []);
 
     useEffect(() => {
-        const fetchNearby = async () => {
-            const response = await axios.post("http://192.168.18.29:3000/api/fetchNearBy", {
-                latitude: 36.27861159104959,
-                longitude: -121.80934530017794
-            });
-            console.log("Nearby activities:", response.data.activities);
-            setActivities(response.data.activities || []);
-        };
-        fetchNearby();
-    }, []);
+  const fetchNearbyActivities = async () => {
+    setLoading(true);
+    try {
+      const location = await getCurrentLocation();
+      if (!location) {
+        console.warn("Current location is unavailable.");
+        setLoading(false);
+        return;
+      }
+
+      const latitude = location.coords.latitude;
+      const longitude = location.coords.longitude;
+      const radius = 60000;
+
+      const token = await AsyncStorage.getItem("token");
+      const config = token
+        ? { headers: { Authorization: `Bearer ${token}` } }
+        : {};
+
+      const res = await axios.post(
+        "http://192.168.18.29:3000/api/fetchNearby",
+        { latitude, longitude, radius },
+        config
+      );
+
+      setActivities(res.data.activities || res.data || []);
+    } catch (err) {
+      console.error("Error fetching nearby activities:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchNearbyActivities();
+}, []);
+
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#000" />
+                <Text>Loading nearby activities...</Text>
+            </View>
+        );
+    }
 
     return (
         <View style={{ flex: 1 }}>
-            <Text style={styles.info}>Nearby</Text>
+            <Text style={styles.info}>Nearby Activities</Text>
 
             <FlatList
                 data={activities}
-                keyExtractor={item => item.id}
+                keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                    console.log("Rendering item:",
-                        item.data.tags.name,
-                        item.data.imageUrl,
-                        item.data.tags.rating,
-                        item.data.tags.user_ratings_total,
-                        item.data.type,
-                        item.data.source,
-                        item.data.tags.formatted_address,
-                        item.data.tags.sac_scale,
-                    ),
-
-
-
-
                     <ActivityCard
-
                         item={item}
                         favourites={favourites}
                         userId={userId}
@@ -86,6 +110,7 @@ const Nearby = () => {
                 windowSize={5}
                 contentContainerStyle={{ paddingBottom: 20 }}
                 showsVerticalScrollIndicator={false}
+                
             />
         </View>
     );
@@ -94,8 +119,15 @@ const Nearby = () => {
 const styles = StyleSheet.create({
     info: {
         fontSize: 14,
-        color: "#555",
+        fontWeight: "bold",
+        color: "#333",
         margin: 10,
+        justifyContent: "center"
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
     },
 });
 
