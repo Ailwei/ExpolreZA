@@ -14,6 +14,12 @@ import getProfileController from '../controller/getProfile';
 import uploadProfilePicController from '../controller/updateProfilePicture';
 import upload from '../middleWare/multer';
 import fetchDataController from '../controller/fetchData';
+import fetchNearbyHikingController from '../controller/fetchHiking';
+import fetchNearbyCampingController from '../controller/fetchCampingSite';
+import fetchNearbyFishingController from '../controller/fetchFishingSites';
+import fetchNearbyWaterfallsController from '../controller/fetchWaterfalls';
+import fetchNearbyMountainPassesController from '../controller/fetchPasses';
+
 const router = Router();
 
 router.post('/register', registerController);
@@ -29,6 +35,11 @@ router.put('/updateProfile', authenticateJWT, updateProfileController);
 router.get('/getProfile', authenticateJWT, getProfileController);
 router.post('/uploadProfilePic', authenticateJWT, upload.single('profilePic'),uploadProfilePicController);
 router.get('/fetchData',authenticateJWT, fetchDataController )
-    
+router.post('/fetchHiking', fetchNearbyHikingController )
+router.post('/fetchFishing', fetchNearbyFishingController)
+router.post('/fetchCamping', fetchNearbyCampingController)
+router.post('/fetchWaterFalls', fetchNearbyWaterfallsController)
+router.post('/fetchPasses', fetchNearbyMountainPassesController )
+
     
 export default router;

@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import db from "../db/database";
 import { fetchNearbySchema } from "../schemas/fetchNearbySchema";
 
-const fetchNearbyController = async (req: Request, res: Response) => {
+const fetchNearbyWaterfallsController = async (req: Request, res: Response) => {
   try {
     const parseResult = fetchNearbySchema.safeParse(req.body);
+
     if (!parseResult.success) {
       return res.status(400).json({
         message: "Validation failed",
@@ -17,9 +18,9 @@ const fetchNearbyController = async (req: Request, res: Response) => {
 
     const { latitude, longitude, radius = 60000 } = req.body;
 
-const nearbyActivities = await db.$queryRaw<
-  { id: string; data: any; distance: number }[]
->`
+    const nearbyActivities = await db.$queryRaw<
+      { id: string; data: any; distance: number }[]
+    >`
       SELECT *,
       (
         6371000 * acos(
@@ -43,14 +44,30 @@ const nearbyActivities = await db.$queryRaw<
       ORDER BY distance ASC;
     `;
 
-    return res.status(200).json({
-      activities: nearbyActivities,
-      count: nearbyActivities.length,
+    const waterfallSpots = nearbyActivities.filter((act) => {
+      const tags = act.data?.tags || {};
+      const category = act.data?.category || "";
+
+      return (
+        tags.waterway === "waterfall" ||
+        tags.natural === "waterfall" ||
+        category === "waterfall" ||
+        category === "waterfalls"
+      );
+    });
+
+    res.status(200).json({
+      count: waterfallSpots.length,
+      activities: waterfallSpots,
+      message:
+        waterfallSpots.length === 0
+          ? "No waterfalls found nearby."
+          : `Found ${waterfallSpots.length} waterfalls nearby.`,
     });
   } catch (error) {
-    console.error("Error fetching nearby activities:", error);
+    console.error("Error fetching nearby waterfalls:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-export default fetchNearbyController;
+export default fetchNearbyWaterfallsController;

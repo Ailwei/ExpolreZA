@@ -13,30 +13,22 @@ export default async function fetchDataController(req: Request, res: Response) {
   }
 
   try {
-    console.log("fetching activities from Overpass...");
     const elements = await fetchActivitiesFromOverpass(
       Number(latitude),
       Number(longitude),
       radius ? Number(radius) : 60000
     );
 
-    console.log(`Total elements fetched: ${elements.length}`);
-
     if (elements.length === 0) {
       return res.json({ elements: [], message: "No activities found" });
     }
 
-    // Chunking setup
     const chunkSize = 100;
-    console.log(`Saving elements in chunks of ${chunkSize}...`);
 
     for (let i = 0; i < elements.length; i += chunkSize) {
       const chunk = elements.slice(i, i + chunkSize);
       await Promise.all(chunk.map((el: any) => saveOverpassElement(el, "osm")));
-      console.log(`Saved chunk ${i / chunkSize + 1} / ${Math.ceil(elements.length / chunkSize)}`);
     }
-
-    console.log("All elements saved successfully!");
 
     res.json({ elements, message: `${elements.length} activities fetched and saved.` });
   } catch (err: any) {
