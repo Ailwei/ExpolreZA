@@ -19,6 +19,8 @@ import fetchNearbyCampingController from '../controller/fetchCampingSite';
 import fetchNearbyFishingController from '../controller/fetchFishingSites';
 import fetchNearbyWaterfallsController from '../controller/fetchWaterfalls';
 import fetchNearbyMountainPassesController from '../controller/fetchPasses';
+import { saveCompletedController } from '../controller/saveCompleted';
+import { fetchCompletedController } from '../controller/fetchCompleted';
 
 const router = Router();
 
@@ -40,6 +42,7 @@ router.post('/fetchFishing', fetchNearbyFishingController)
 router.post('/fetchCamping', fetchNearbyCampingController)
 router.post('/fetchWaterFalls', fetchNearbyWaterfallsController)
 router.post('/fetchPasses', fetchNearbyMountainPassesController )
+router.post('/saveCompleted',authenticateJWT, saveCompletedController)
+router.post('/fetchCompleted', fetchCompletedController)
 
-    
 export default router;
