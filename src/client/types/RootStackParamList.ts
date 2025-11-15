@@ -13,7 +13,8 @@ export type RootStackParamList = {
       | 'ForgotPassword'
       | 'ActivityDetails'
       | 'ViewFavouritesScreen'
-      | 'ViewMapScreen';
+      | 'ViewMapScreen'
+      | 'CompletedScreen';
 
     params?: any;
   };
@@ -25,6 +26,7 @@ export type RootStackParamList = {
   EditProfileScreen: undefined;
   ForgotPassword: undefined;
   ActivityDetails: { activity: any; isFavourited: boolean };
+  CompletedScreen: { activity: { id: string; name?: string } };
   ViewFavouritesScreen: { favourites: any[] };
   ViewMapScreen: { lat: number; lng: number; title?: string };
 

@@ -30,7 +30,8 @@ import ShareHeaderIcon from '../component/shareIcon';
 import CompletedHeaderIcon from '../component/comlptedIcon';
 import ViewFavouritesScreen from '../screens/viewFavouritesScreen';
 import ViewMapScreen from '../screens/ViewMapScreen';
-
+import ShareActivityScreen from '../screens/ShareActivityScreen';
+import CompletedScreen from '../screens/Comleted';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 const FavouritesStack = createStackNavigator();
@@ -54,6 +55,8 @@ function MainStack() {
       <Stack.Screen name="SettingsScreen" component={SettingsScreeen} options={{ headerShown: true }} />
       <Stack.Screen name="SearchFilterScreen" component={SearchFilterScreen} options={{ headerShown: true }} />
       <Stack.Screen name="ViewMapScreen" component={ViewMapScreen} options={{ headerShown: true, title: "Map" }}/>
+      <Stack.Screen name="CompletedScreen" component={CompletedScreen} options={{ title: "Completed Activities" }} />
+<Stack.Screen name="ShareActivityScreen" component={ShareActivityScreen} options={{ title: "Share Activity" }}  />
       <Stack.Screen
         name="ActivityDetails"
         component={ActivityDetails}
@@ -62,12 +65,20 @@ function MainStack() {
           title: '',
           headerRight: () => {
             const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-            const params = route.params as { isFavourited: boolean };
+            const params = route.params as { activity?: any; isFavourited?: boolean };
+            const { activity, isFavourited } = params;
+
             return (
               <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
                 
-                <ShareHeaderIcon isFavourited={false} onPress={() => { }} />
-                <CompletedHeaderIcon isFavourited={false} onPress={() => { }} />
+                <ShareHeaderIcon isSharedActivity={false} onPress={() => {
+
+                   navigation.navigate('' as never)
+                 }} />
+   <CompletedHeaderIcon activityId={activity.id} isCompleted={false} />
+
+
+
                 <FavouriteHeaderIcon
                   isFavourited={params?.isFavourited ?? false}
                   onPress={() => {

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, Dimensions, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Image,ScrollView, Dimensions, StyleSheet, TouchableOpacity } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import * as ImagePicker from 'expo-image-picker';
+import CompletedScreen from "./Comleted";
 
 const Feeds = () => (
-    <View style={styles.tabContent}>
+    <ScrollView style={styles.tabContent}>
         <Text>Feeds</Text>
-    </View>
+    </ScrollView>
 );
 const Reviews = () => (
     <View style={styles.tabContent}>
@@ -20,11 +21,17 @@ const Posts = () => (
         <Text>Posts</Text>
     </View>
 );
-const Photos = () => (
-    <View style={styles.tabContent}>
-        <Text>Photos</Text>
-    </View>
+const Completed = () => (
+  <ScrollView
+    contentContainerStyle={{ padding: 10 }}
+    showsVerticalScrollIndicator={true}
+    nestedScrollEnabled={true}
+  >
+    <CompletedScreen />
+  </ScrollView>
 );
+
+
 
 const { height, width } = Dimensions.get('window');
 type UserProfile = {
@@ -43,16 +50,15 @@ const ProfileScreen = () => {
         { key: 'feeds', title: 'Feeds' },
         { key: 'reviews', title: 'Reviews' },
         { key: 'posts', title: 'Posts' },
-        { key: 'photos', title: 'Photos' },
+        { key: 'completed', title: 'Completed' },
     ]);
     const renderScene = SceneMap({
         feeds: Feeds,
         reviews: Reviews,
         posts: Posts,
-        photos: Photos,
+        completed: Completed,
     });
 
-    // Fetch profile function (so we can call it after upload)
     const fetchProfile = async () => {
         try {
             const token = await AsyncStorage.getItem('token');
@@ -102,50 +108,63 @@ const ProfileScreen = () => {
     };
 
     return (
+        <ScrollView style={{ flex: 1 }} >
+         <View style={{ flex: 1 }}>
+   
         <View style={styles.imageContainer}>
+            
             <TouchableOpacity onPress={pickImage} disabled={uploading}>
-              <Image
-  source={
-    profile?.profilePic
-      ? { uri: `http://192.168.18.29:3000/uploads/${profile.profilePic}` }
-      : require('../assets/defaultPic.png')
-  }
-  style={styles.profile}
-  resizeMode="cover"
-/>
+                <Image
+                    source={
+                        profile?.profilePic
+                            ? { uri: `http://192.168.18.29:3000/uploads/${profile.profilePic}` }
+                            : require('../assets/defaultPic.png')
+                    }
+                    style={styles.profile}
+                />
             </TouchableOpacity>
-            <View>
-                <Text style={styles.userNameLabel}>{profile?.firstName}  {profile?.lastName}</Text>
-                <View style={styles.followersContainer}>
-                    <TouchableOpacity onPress={() => console.log('Followers')}>
-                        <Text style={styles.followersLabel}>
-                            Followers: {profile?.followers ? profile.followers.length : 0}
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => console.log('Following')}>
-                        <Text style={styles.followingLabel}>
-                            Following: {profile?.following ? profile.following.length : 0}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+
+            <Text style={styles.userNameLabel}>
+                {profile?.firstName} {profile?.lastName}
+            </Text>
+
+            <View style={styles.followersContainer}>
+                <TouchableOpacity>
+                    <Text style={styles.followersLabel}>
+                        Followers: {profile?.followers?.length ?? 0}
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity>
+                    <Text style={styles.followingLabel}>
+                        Following: {profile?.following?.length ?? 0}
+                    </Text>
+                </TouchableOpacity>
             </View>
-            <TabView
-                navigationState={{ index, routes }}
-                renderScene={renderScene}
-                onIndexChange={setIndex}
-                initialLayout={{ width: Dimensions.get('window').width }}
-                renderTabBar={(props) => (
-                    <TabBar
-                        {...props}
-                        style={{ backgroundColor: 'grey' }}
-                        indicatorStyle={{ backgroundColor: 'white' }}
-                        scrollEnabled={true}
-                        tabStyle={{ width: width * 0.25 }}
-                    />
-                )}
-            />
+
+            <View style={{height: height }}>
+                <TabView
+                    navigationState={{ index, routes }}
+                    renderScene={renderScene}
+                    onIndexChange={setIndex}
+                    initialLayout={{ width: width }}
+                    renderTabBar={(props) => (
+                        <TabBar
+                            {...props}
+                            style={{ backgroundColor: 'grey' }}
+                            indicatorStyle={{ backgroundColor: 'white' }}
+                            scrollEnabled
+                        />
+                    )}
+                    
+                />
+            </View>
+
         </View>
-    );
+    </View>
+        </ScrollView>
+
+);
 };
 
 const styles = StyleSheet.create({
@@ -161,7 +180,7 @@ const styles = StyleSheet.create({
         marginLeft: 20,
         borderRadius: 60,
         width: width * 0.21,
-        height: height * 0.14,
+        height: height * 0.10,
     },
     userNameLabel: {
         fontSize: 15,
@@ -207,10 +226,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     tabContent: {
-        flex: 1,
-        padding: 16,
-        justifyContent: "center",
-        alignItems: "center",
+        padding: 10,
     }
 });
 
